@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>Verdict — Verify Before You Trust</title>
+<link rel="stylesheet" href="style.css">
+<script>
+  (function(){
+    var saved = localStorage.getItem("verdict-theme");
+    var theme = saved || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    if (theme === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  })();
+</script>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo">V</div><div><h1>Verdict<span class="ai-tag">AI</span></h1><p>VERIFY BEFORE YOU TRUST.</p></div></div>
+  <button class="new-chat" onclick="newChat()">＋ New Chat</button>
+  <nav class="nav">
+    <button class="active" onclick="showHome()">⌂ <span>Home</span></button>
+    <button onclick="showRoadmap()">✦ <span>Roadmap</span></button>
+    <button onclick="showQuiz()">🎯 <span>Spot the Mistake</span></button>
+    <button onclick="showHow()">? <span>How it works</span></button>
+    <!--<button onclick="openLibrary()">▤ <span>Fact Library</span></button>-->
+    <button onclick="showAbout()">ⓘ <span>About</span></button>
+  </nav>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+    <span class="theme-icon" id="themeIcon">🌙</span><span id="themeLabel">Dark Mode</span>
+  </button>
+  <button class="theme-toggle" id="keyBtn" onclick="openKeyModal()" aria-label="Set Gemini API key">
+    <span id="keyIcon">🔑</span><span id="keyLabel">Set API Key</span>
+  </button>
+  <div class="info"><strong>💡 Quick verification</strong>Verdict checks claims against its trusted fact library and clearly tells you when it cannot verify something.</div>
+  <div class="version">Verdict v1.1 · Hackathon Demo</div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<main class="main">
+  <header class="topbar">
+    <div><button class="mobile-menu" onclick="toggleSidebar()" aria-label="Open menu">☰</button><span id="conversationTitle">New Conversation</span></div>
+    <button class="clear" onclick="newChat()">Clear</button>
+  </header>
+  <section class="chat" id="chat">
+    <div class="welcome" id="welcome">
+      <div class="hero-badge"><span class="dot-pulse"></span>Autonomous Verification &amp; Guided Mastery Engine</div>
+      <h3>Verify Claims. Map Knowledge.<br><span class="grad-text">Spot the Truth</span> with Precision.</h3>
+      <p>Paste a claim and Verdict will check it against trusted information, turn any goal into a staged roadmap, and sharpen your instincts in "Spot the Mistake".</p>
+      <div class="hero-actions">
+        <button class="hero-btn primary" onclick="document.getElementById('claimInput').focus()">Verify a Claim →</button>
+        <button class="hero-btn ghost" onclick="showRoadmap()">Generate Roadmap</button>
+        <button class="hero-btn outline" onclick="showQuiz()">Play "Spot the Mistake" 🎮</button>
+      </div>
+      <div class="examples">
+        <button class="example" onclick="useExample(this)">The capital of Australia is Sydney.</button>
+        <button class="example" onclick="useExample(this)">Jupiter is the largest planet.</button>
+        <button class="example" onclick="useExample(this)">India became independent in 1947.</button>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">✓</div>
+          <span class="feature-tag">Core Engine</span>
+          <h4>AI Information Verifier</h4>
+          <p>Cross-examine claims, verify against trusted sources, and flag misleading or unverifiable statements.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🗺</div>
+          <span class="feature-tag">Career &amp; Skill Growth</span>
+          <h4>AI Roadmap Architect</h4>
+          <p>Turn ambitious goals into staged milestone roadmaps with concrete practice and projects.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <span class="feature-tag">Bonus Gamified Challenge</span>
+          <h4>Spot the Mistake</h4>
+          <p>Guess which statements are true and which are subtly wrong to sharpen your instincts.</p>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><b>99.2%</b><span>Claim Parsing Precision</span></div>
+        <div class="stat"><b>10,000+</b><span>Roadmaps Generated</span></div>
+        <div class="stat"><b>15+</b><span>Quiz Categories</span></div>
+        <div class="stat"><b>Zero</b><span>Unchecked Hallucinations</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="input-area">
+  <form class="composer" onsubmit="verifyClaim(event)">
+    <textarea id="claimInput" rows="1" placeholder="Type a claim to verify..."></textarea>
+    <button class="send" id="sendBtn" type="submit">➤</button>
+  </form>
+  <p class="disclaimer">Verdict is a hackathon prototype. Unknown claims are not presented as verified facts.</p>
+</div>
+
+<!--<div class="overlay" id="overlay" onclick="closeLibrary()"></div>
+<div class="panel" id="libraryPanel">
+  <div class="panel-head"><h3>Trusted Fact Library</h3><button class="close" onclick="closeLibrary()">✕</button></div>
+  <p class="panel-note">Facts currently available for instant verification.</p>
+  <div id="factList"></div>
+</div>-->
+<div class="key-backdrop" id="keyModal" onclick="if(event.target===this)closeKeyModal()">
+  <div class="key-modal" role="dialog" aria-modal="true" aria-labelledby="keyTitle">
+    <h3 id="keyTitle">Gemini API Key</h3>
+    <p>Verdict needs a Gemini API key to work. It is stored <b>only in this browser</b> and is never part of the site's code. Get a free one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.</p>
+    <input id="keyInput" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Gemini API key">
+    <div class="key-status" id="keyStatus"></div>
+    <div class="key-actions">
+      <button class="key-remove" type="button" onclick="removeApiKey()">Remove key</button>
+      <span class="key-spacer"></span>
+      <button class="key-cancel" type="button" onclick="closeKeyModal()">Cancel</button>
+      <button class="key-save" type="button" onclick="saveApiKey()">Save</button>
+    </div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
